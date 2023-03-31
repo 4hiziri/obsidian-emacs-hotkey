@@ -1,9 +1,8 @@
 import { getCurves } from 'crypto';
 import { App, Editor, MarkdownView, Scope, Hotkey, Modal, Notice, Plugin, PluginSettingTab, Setting, EditorPosition } from 'obsidian';
 
-// editorCheckCallback: デフォルトのホットキーと衝突させないためのCallback
-// デフォルトで衝突してしまうものだからどうしようか
 // 衝突するキーマップを解除した.obsidian/hotkeys.jsonを直接配布?
+
 // C-M-a - editor.exec('goStart'); // これはこれで使えるのでメモしておく
 
 // https://github.com/inouetakuya/obsidian-kill-and-yank/
@@ -11,13 +10,16 @@ import { App, Editor, MarkdownView, Scope, Hotkey, Modal, Notice, Plugin, Plugin
 // MITだから適当にREADMEの最後にでも記載する
 // TODO: ライセンスとかに色々反映
 
+// TODO: 欲しいキー
+// C-h = backspace
+// C-d = delete
+// C-uは無理か
+// C-s = search
+// C-space: 無くす？ハイライト表示ができなくて微妙、cssからやる感じか?
+// C-/: undo
+
 export default class EmacsHotkey extends Plugin {
 	private mark: EditorPosition | null = null;
-
-	// private isComposing(view: MarkdownView): boolean {
-	// 	const editorView = view.editor.cm as EditorView;
-	// 	return editorView.composing;
-	// }
 
 	async onload() {
 		this.addCommand({
@@ -83,20 +85,17 @@ export default class EmacsHotkey extends Plugin {
 			id: 'emacs-kill-line',
 			name: 'Emacs kill line',
 			hotkeys: [{ modifiers: ['Ctrl'], key: 'k' }],
-			editorCheckCallback: (checking: boolean, editor: Editor, view: MarkdownView) => {
-				// if (this.isComposing(view)) return;
-				new Notice(checking.toString());
-
+			editorCallback: (editor: Editor, view: MarkdownView) => {
 				const pos: EditorPosition = editor.getCursor();
 				const line: string = editor.getLine(pos.line);
 
-				const textToBeRetained = line.slice(0, pos.ch);
-				const textToBeCut = line.slice(pos.ch);
+				const textToBeRetained: string = line.slice(0, pos.ch);
+				const textToBeCut: string = line.slice(pos.ch);g
 
 				navigator.clipboard.writeText(textToBeCut);
 
 				editor.setLine(pos.line, textToBeRetained);
-				// editor.setCursor(pos, pos.ch);
+				editor.setCursor(pos, pos.ch); // setLineとかすると位置が行頭になるっぽい
 			},
 		})
 
@@ -104,10 +103,7 @@ export default class EmacsHotkey extends Plugin {
 			id: 'emacs-kill-region',
 			name: 'Emacs kill region',
 			hotkeys: [{ modifiers: ['Ctrl'], key: 'w' }],
-			editorCheckCallback: (checking: boolean, editor: Editor, view: MarkdownView) => {
-				// if (this.isComposing(view)) return
-				new Notice(checking.toString());
-
+			editorCallback: (editor: Editor, view: MarkdownView) => {
 				if (this.mark) {
 					editor.setSelection(this.mark, editor.getCursor());
 					this.mark = null;
@@ -118,13 +114,10 @@ export default class EmacsHotkey extends Plugin {
 		})
 
 		this.addCommand({
-			id: 'emacs yank',
+			id: 'emacs-yank',
 			name: 'Emacs yank',
 			hotkeys: [{ modifiers: ['Ctrl'], key: 'y' }],
-			editorCheckCallback: (checking: boolean, editor: Editor, view: MarkdownView) => {
-				// if (this.isComposing(view)) return
-				new Notice(checking.toString());
-
+			editorCallback: (editor: Editor, view: MarkdownView) => {
 				navigator.clipboard.readText().then((text) => {
 					editor.replaceSelection(text);
 				})
@@ -132,20 +125,23 @@ export default class EmacsHotkey extends Plugin {
 		})
 
 		this.addCommand({
-			id: 'set-mark',
-			name: 'Set mark (Toggle the start position of the selection)',
+			id: 'emacs-set-mark',
+			name: 'Emacs set mark',
 			hotkeys: [{ modifiers: ['Ctrl'], key: ' ' }],
-			editorCheckCallback: (checking: boolean, editor: Editor, view: MarkdownView) => {
-				new Notice(checking.toString());
-
-				if (this.mark) {
-					editor.setSelection(this.mark, editor.getCursor());
-					this.mark = null;
-				} else {
-					this.mark = editor.getCursor();
-				}
+			editorCallback: (editor: Editor, view: MarkdownView) => {
+				this.mark = editor.getCursor();
 			},
 		})
+
+		// this.addCommand({
+		// 	id: 'emacs-backspace',
+		// 	name: 'Emacs backspace',
+		// 	hotkeys: [{ modifiers: ['Ctrl'], key: 'h' }],
+		// 	editorCallback: (editor: Editor, view: MarkdownView) => {
+		// 		editor.exec('goLeft');
+
+		// 	},
+		// })
 	}
 
 	onunload() {}
