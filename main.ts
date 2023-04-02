@@ -6,9 +6,7 @@ import { App, Editor, MarkdownView, KeymapEventHandler, Scope, Hotkey, Modal, No
 // C-M-a - editor.exec('goStart'); // これはこれで使えるのでメモしておく
 
 // TODO: 欲しいキー
-// C-d = delete
 // C-uは無理か
-// とりあえずで実装してしまう、CodeMirrorとかの考慮はあと
 
 export default class EmacsHotkey extends Plugin {
 	private mark: EditorPosition | null = null;
@@ -142,6 +140,19 @@ export default class EmacsHotkey extends Plugin {
 			editorCallback: (editor: Editor, view: MarkdownView) => {
 				const head = editor.getCursor();
 				editor.exec('goLeft');
+				const anchor = editor.getCursor();
+				editor.setSelection(head, anchor);
+				editor.replaceSelection('');
+			},
+		});
+
+		this.addCommand({
+			id: 'emacs-delete',
+			name: 'Emacs delete',
+			hotkeys: [{ modifiers: ['Ctrl'], key: 'd' }],
+			editorCallback: (editor: Editor, view: MarkdownView) => {
+				const head = editor.getCursor();
+				editor.exec('goRight');
 				const anchor = editor.getCursor();
 				editor.setSelection(head, anchor);
 				editor.replaceSelection('');
