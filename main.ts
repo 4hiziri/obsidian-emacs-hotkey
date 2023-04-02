@@ -1,12 +1,11 @@
 import { getCurves } from 'crypto';
-import { App, Editor, MarkdownView, Scope, Hotkey, Modal, Notice, Plugin, PluginSettingTab, Setting, EditorPosition } from 'obsidian';
+import { App, Editor, MarkdownView, KeymapEventHandler, Scope, Hotkey, Modal, Notice, Plugin, PluginSettingTab, Setting, EditorPosition, KeymapContext } from 'obsidian';
 
 // 衝突するキーマップを解除した.obsidian/hotkeys.jsonを直接配布?
 
 // C-M-a - editor.exec('goStart'); // これはこれで使えるのでメモしておく
 
 // TODO: 欲しいキー
-// C-h = backspace
 // C-d = delete
 // C-uは無理か
 // とりあえずで実装してしまう、CodeMirrorとかの考慮はあと
@@ -90,7 +89,7 @@ export default class EmacsHotkey extends Plugin {
 				editor.setLine(pos.line, textToBeRetained);
 				editor.setCursor(pos, pos.ch); // setLineとかすると位置が行頭になるっぽい
 			},
-		})
+		});
 
 		this.addCommand({
 			id: 'emacs-kill-region',
@@ -104,7 +103,7 @@ export default class EmacsHotkey extends Plugin {
 				navigator.clipboard.writeText(editor.getSelection());
 				editor.replaceSelection('');
 			},
-		})
+		});
 
 		this.addCommand({
 			id: 'emacs-yank',
@@ -115,7 +114,7 @@ export default class EmacsHotkey extends Plugin {
 					editor.replaceSelection(text);
 				})
 			},
-		})
+		});
 
 		this.addCommand({
 			id: 'emacs-set-mark',
@@ -124,7 +123,7 @@ export default class EmacsHotkey extends Plugin {
 			editorCallback: (editor: Editor, view: MarkdownView) => {
 				this.mark = editor.getCursor();
 			},
-		})
+		});
 
 		this.addCommand({
 			id: 'emacs-undo',
@@ -133,17 +132,21 @@ export default class EmacsHotkey extends Plugin {
 			editorCallback: (editor: Editor, view: MarkdownView) => {
 				editor.undo();
 			},
-		})
+		});
 
-		// this.addCommand({
-		// 	id: 'emacs-backspace',
-		// 	name: 'Emacs backspace',
-		// 	hotkeys: [{ modifiers: ['Ctrl'], key: 'h' }],
-		// 	editorCallback: (editor: Editor, view: MarkdownView) => {
-		// 		editor.exec('goLeft');
-
-		// 	},
-		// })
+		// it works!
+		this.addCommand({
+			id: 'emacs-backspace',
+			name: 'Emacs backspace',
+			hotkeys: [{ modifiers: ['Ctrl'], key: 'h' }],
+			editorCallback: (editor: Editor, view: MarkdownView) => {
+				const head = editor.getCursor();
+				editor.exec('goLeft');
+				const anchor = editor.getCursor();
+				editor.setSelection(head, anchor);
+				editor.replaceSelection('');
+			},
+		});
 	}
 
 	onunload() {}
