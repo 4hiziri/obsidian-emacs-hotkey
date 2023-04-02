@@ -17,6 +17,7 @@ import { App, Editor, MarkdownView, Scope, Hotkey, Modal, Notice, Plugin, Plugin
 // C-s = search
 // C-space: 無くす？ハイライト表示ができなくて微妙、cssからやる感じか?
 // C-/: undo
+// とりあえずで実装してしまう、CodeMirrorとかの考慮はあと
 
 export default class EmacsHotkey extends Plugin {
 	private mark: EditorPosition | null = null;
@@ -90,7 +91,7 @@ export default class EmacsHotkey extends Plugin {
 				const line: string = editor.getLine(pos.line);
 
 				const textToBeRetained: string = line.slice(0, pos.ch);
-				const textToBeCut: string = line.slice(pos.ch);g
+				const textToBeCut: string = line.slice(pos.ch);
 
 				navigator.clipboard.writeText(textToBeCut);
 
@@ -130,6 +131,15 @@ export default class EmacsHotkey extends Plugin {
 			hotkeys: [{ modifiers: ['Ctrl'], key: ' ' }],
 			editorCallback: (editor: Editor, view: MarkdownView) => {
 				this.mark = editor.getCursor();
+			},
+		})
+
+		this.addCommand({
+			id: 'emacs-undo',
+			name: 'Emacs undo',
+			hotkeys: [{ modifiers: ['Ctrl'], key: '/' }],
+			editorCallback: (editor: Editor, view: MarkdownView) => {
+				editor.undo();
 			},
 		})
 
