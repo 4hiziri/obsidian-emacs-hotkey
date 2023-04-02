@@ -5,11 +5,6 @@ import { App, Editor, MarkdownView, Scope, Hotkey, Modal, Notice, Plugin, Plugin
 
 // C-M-a - editor.exec('goStart'); // これはこれで使えるのでメモしておく
 
-// https://github.com/inouetakuya/obsidian-kill-and-yank/
-// からkill yankを実装
-// MITだから適当にREADMEの最後にでも記載する
-// TODO: ライセンスとかに色々反映
-
 // TODO: 欲しいキー
 // C-h = backspace
 // C-d = delete
