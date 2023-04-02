@@ -1,13 +1,6 @@
 import { getCurves } from 'crypto';
 import { App, Editor, MarkdownView, KeymapEventHandler, Scope, Hotkey, Modal, Notice, Plugin, PluginSettingTab, Setting, EditorPosition, KeymapContext } from 'obsidian';
 
-// 衝突するキーマップを解除した.obsidian/hotkeys.jsonを直接配布?
-
-// C-M-a - editor.exec('goStart'); // これはこれで使えるのでメモしておく
-
-// TODO: 欲しいキー
-// C-uは無理か
-
 export default class EmacsHotkey extends Plugin {
 	private mark: EditorPosition | null = null;
 
@@ -132,7 +125,6 @@ export default class EmacsHotkey extends Plugin {
 			},
 		});
 
-		// it works!
 		this.addCommand({
 			id: 'emacs-backspace',
 			name: 'Emacs backspace',
