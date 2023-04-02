@@ -9,7 +9,6 @@ import { App, Editor, MarkdownView, Scope, Hotkey, Modal, Notice, Plugin, Plugin
 // C-h = backspace
 // C-d = delete
 // C-uは無理か
-// C-/: undo
 // とりあえずで実装してしまう、CodeMirrorとかの考慮はあと
 
 export default class EmacsHotkey extends Plugin {
