@@ -1,7 +1,7 @@
 {
 	"id": "obsidian-emacs-hotkey",
 	"name": "Emacs Hotkey",
-	"version": "0.1.0",
+	"version": "0.2.0",
 	"minAppVersion": "0.0.1",
 	"description": "I can't edit without Emacs.",
 	"author": "Hiziri",
