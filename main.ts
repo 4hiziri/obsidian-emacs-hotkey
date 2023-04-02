@@ -9,8 +9,6 @@ import { App, Editor, MarkdownView, Scope, Hotkey, Modal, Notice, Plugin, Plugin
 // C-h = backspace
 // C-d = delete
 // C-uは無理か
-// C-s = search
-// C-space: 無くす？ハイライト表示ができなくて微妙、cssからやる感じか?
 // C-/: undo
 // とりあえずで実装してしまう、CodeMirrorとかの考慮はあと
 
